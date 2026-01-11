@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="456" height="456" viewBox="0 0 456 456" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M228 100C180.294 100 142 138.294 142 186V270C142 317.706 180.294 356 228 356C275.706 356 314 317.706 314 270V186C314 138.294 275.706 100 228 100Z" fill="white"/>
+    <path d="M228 140C202.804 140 182 160.804 182 186V270C182 295.196 202.804 316 228 316C253.196 316 274 295.196 274 270V186C274 160.804 253.196 140 228 140Z" fill="#512BD4"/>
+    <rect x="208" y="180" width="40" height="8" rx="4" fill="white"/>
+    <rect x="208" y="200" width="40" height="8" rx="4" fill="white"/>
+    <rect x="208" y="220" width="40" height="8" rx="4" fill="white"/>
+    <rect x="208" y="240" width="40" height="8" rx="4" fill="white"/>
+</svg>
