@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="TicketTracker.Views.OperatorPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TicketTracker.ViewModels"
+             Title="{Binding Title}"
+             x:DataType="vm:OperatorViewModel">
+
+    <Grid RowDefinitions="Auto,*,Auto,*">
+        
+        <!-- Заголовок и кнопки управления -->
+        <StackLayout Grid.Row="0" Orientation="Horizontal" Padding="10" Spacing="10">
+            <Label Text="Панель оператора" 
+                   Style="{StaticResource HeaderLabel}" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="StartAndExpand" />
+            <Button Text="Создать заявку" 
+                    Command="{Binding ShowCreateTicketCommand}"
+                    Style="{StaticResource PrimaryButton}" />
+            <Button Text="Обновить" 
+                    Command="{Binding RefreshCommand}"
+                    Style="{StaticResource SecondaryButton}" />
+            <Button Text="Выйти" 
+                    Command="{Binding LogoutCommand}"
+                    Style="{StaticResource SecondaryButton}" />
+        </StackLayout>
+
+        <!-- Форма создания заявки -->
+        <StackLayout Grid.Row="1" 
+                     Padding="10" 
+                     Spacing="10"
+                     IsVisible="{Binding IsCreateTicketVisible}">
+            <Label Text="Создание новой заявки" Style="{StaticResource SubHeaderLabel}" />
+            
+            <Label Text="Заголовок:" />
+            <Entry Text="{Binding NewTicketTitle}" Placeholder="Введите заголовок заявки" />
+            
+            <Label Text="Описание:" />
+            <Editor Text="{Binding NewTicketDescription}" 
+                    Placeholder="Введите описание заявки" 
+                    HeightRequest="100" />
+            
+            <Label Text="Приоритет:" />
+            <Picker ItemsSource="{Binding Source={x:Static vm:OperatorViewModel.PriorityOptions}}"
+                    SelectedItem="{Binding NewTicketPriority}" />
+            
+            <StackLayout Orientation="Horizontal" Spacing="10">
+                <Button Text="Создать" 
+                        Command="{Binding CreateTicketCommand}"
+                        Style="{StaticResource PrimaryButton}" />
+                <Button Text="Отмена" 
+                        Command="{Binding HideCreateTicketCommand}"
+                        Style="{StaticResource SecondaryButton}" />
+            </StackLayout>
+        </StackLayout>
+
+        <!-- Список заявок -->
+        <StackLayout Grid.Row="2" Padding="10,0">
+            <Label Text="Мои заявки" Style="{StaticResource SubHeaderLabel}" />
+        </StackLayout>
+        
+        <Grid Grid.Row="3" ColumnDefinitions="2*,*" Padding="10">
+            
+            <!-- Список заявок -->
+            <CollectionView Grid.Column="0" 
+                            ItemsSource="{Binding Tickets}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedTicket}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10" RowDefinitions="Auto,Auto,Auto">
+                            <Label Grid.Row="0" 
+                                   Text="{Binding Title}" 
+                                   FontAttributes="Bold" 
+                                   FontSize="16" />
+                            <Label Grid.Row="1" 
+                                   Text="{Binding Status}" 
+                                   FontSize="14" 
+                                   TextColor="{StaticResource Gray600}" />
+                            <Label Grid.Row="2" 
+                                   Text="{Binding CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" 
+                                   FontSize="12" 
+                                   TextColor="{StaticResource Gray500}" />
+                            
+                            <!-- Кнопки действий -->
+                            <StackLayout Grid.Row="3" 
+                                         Orientation="Horizontal" 
+                                         Spacing="5" 
+                                         Margin="0,5,0,0">
+                                <Button Text="Редактировать" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OperatorViewModel}}, Path=EditTicketCommand}"
+                                        CommandParameter="{Binding .}"
+                                        FontSize="12" />
+                                <Button Text="Закрыть" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OperatorViewModel}}, Path=CloseTicketCommand}"
+                                        CommandParameter="{Binding .}"
+                                        FontSize="12" />
+                            </StackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- История выбранной заявки -->
+            <StackLayout Grid.Column="1" Padding="10,0,0,0">
+                <Label Text="История заявки" Style="{StaticResource SubHeaderLabel}" />
+                <CollectionView ItemsSource="{Binding TicketHistory}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout Padding="5" Spacing="2">
+                                <Label Text="{Binding Action}" 
+                                       FontAttributes="Bold" 
+                                       FontSize="14" />
+                                <Label Text="{Binding User.FullName}" 
+                                       FontSize="12" 
+                                       TextColor="{StaticResource Gray600}" />
+                                <Label Text="{Binding CreatedAt, StringFormat='{0:dd.MM.yyyy HH:mm}'}" 
+                                       FontSize="10" 
+                                       TextColor="{StaticResource Gray500}" />
+                                <Label Text="{Binding Description}" 
+                                       FontSize="12" 
+                                       IsVisible="{Binding Description, Converter={StaticResource StringIsNotNullOrEmptyConverter}}" />
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+        </Grid>
+
+        <!-- Сообщение об ошибке -->
+        <Label Grid.Row="3" 
+               Text="{Binding ErrorMessage}" 
+               TextColor="Red" 
+               FontSize="14"
+               IsVisible="{Binding HasError}"
+               HorizontalOptions="Center"
+               VerticalOptions="End"
+               Margin="10" />
+
+        <!-- Индикатор загрузки -->
+        <ActivityIndicator Grid.Row="3" 
+                           IsVisible="{Binding IsBusy}" 
+                           IsRunning="{Binding IsBusy}"
+                           Color="{StaticResource Primary}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center" />
+
+    </Grid>
+
+</ContentPage>

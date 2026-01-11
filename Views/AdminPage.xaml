@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="TicketTracker.Views.AdminPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TicketTracker.ViewModels"
+             Title="{Binding Title}"
+             x:DataType="vm:AdminViewModel">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        
+        <!-- Заголовок и кнопки управления -->
+        <StackLayout Grid.Row="0" Orientation="Horizontal" Padding="10" Spacing="10">
+            <Label Text="Панель администратора" 
+                   Style="{StaticResource HeaderLabel}" 
+                   VerticalOptions="Center" 
+                   HorizontalOptions="StartAndExpand" />
+            <Button Text="Создать пользователя" 
+                    Command="{Binding ShowCreateUserCommand}"
+                    Style="{StaticResource PrimaryButton}" />
+            <Button Text="Обновить" 
+                    Command="{Binding RefreshCommand}"
+                    Style="{StaticResource SecondaryButton}" />
+            <Button Text="Выйти" 
+                    Command="{Binding LogoutCommand}"
+                    Style="{StaticResource SecondaryButton}" />
+        </StackLayout>
+
+        <!-- Форма создания пользователя -->
+        <StackLayout Grid.Row="1" 
+                     Padding="10" 
+                     Spacing="10"
+                     IsVisible="{Binding IsCreateUserVisible}">
+            <Label Text="Создание нового пользователя" Style="{StaticResource SubHeaderLabel}" />
+            
+            <Label Text="Логин:" />
+            <Entry Text="{Binding NewUserLogin}" Placeholder="Введите логин" />
+            
+            <Label Text="Пароль:" />
+            <Entry Text="{Binding NewUserPassword}" Placeholder="Введите пароль" IsPassword="True" />
+            
+            <Label Text="Полное имя:" />
+            <Entry Text="{Binding NewUserFullName}" Placeholder="Введите полное имя" />
+            
+            <Label Text="Роль:" />
+            <Picker ItemsSource="{Binding Source={x:Static vm:AdminViewModel.RoleOptions}}"
+                    SelectedItem="{Binding NewUserRole}" />
+            
+            <StackLayout Orientation="Horizontal" Spacing="10">
+                <Button Text="Создать" 
+                        Command="{Binding CreateUserCommand}"
+                        Style="{StaticResource PrimaryButton}" />
+                <Button Text="Отмена" 
+                        Command="{Binding HideCreateUserCommand}"
+                        Style="{StaticResource SecondaryButton}" />
+            </StackLayout>
+        </StackLayout>
+
+        <!-- Список пользователей -->
+        <StackLayout Grid.Row="1" Padding="10" IsVisible="{Binding IsCreateUserVisible, Converter={StaticResource InvertedBoolConverter}}">
+            <Label Text="Управление пользователями" Style="{StaticResource SubHeaderLabel}" />
+            
+            <CollectionView ItemsSource="{Binding Users}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedUser}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10" RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                            <Label Grid.Row="0" Grid.Column="0"
+                                   Text="{Binding FullName}" 
+                                   FontAttributes="Bold" 
+                                   FontSize="16" />
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Text="{Binding Login, StringFormat='Логин: {0}'}" 
+                                   FontSize="14" 
+                                   TextColor="{StaticResource Gray600}" />
+                            <Label Grid.Row="2" Grid.Column="0"
+                                   Text="{Binding Role, StringFormat='Роль: {0}'}" 
+                                   FontSize="14" 
+                                   TextColor="{StaticResource Gray600}" />
+                            <Label Grid.Row="3" Grid.Column="0"
+                                   Text="{Binding IsActive, StringFormat='Активен: {0}'}" 
+                                   FontSize="12" 
+                                   TextColor="{StaticResource Gray500}" />
+                            
+                            <!-- Кнопки действий -->
+                            <StackLayout Grid.Row="0" Grid.RowSpan="4" Grid.Column="1" 
+                                         Orientation="Vertical" 
+                                         Spacing="5" 
+                                         VerticalOptions="Center">
+                                <Button Text="Сбросить пароль" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AdminViewModel}}, Path=ResetPasswordCommand}"
+                                        CommandParameter="{Binding .}"
+                                        FontSize="10" />
+                                <Button Text="Деактивировать" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AdminViewModel}}, Path=DeactivateUserCommand}"
+                                        CommandParameter="{Binding .}"
+                                        FontSize="10"
+                                        IsVisible="{Binding IsActive}" />
+                                <Button Text="Активировать" 
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:AdminViewModel}}, Path=ActivateUserCommand}"
+                                        CommandParameter="{Binding .}"
+                                        FontSize="10"
+                                        IsVisible="{Binding IsActive, Converter={StaticResource InvertedBoolConverter}}" />
+                            </StackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+
+        <!-- Сообщение об ошибке и индикатор загрузки -->
+        <StackLayout Grid.Row="2" Padding="10">
+            <Label Text="{Binding ErrorMessage}" 
+                   TextColor="Red" 
+                   FontSize="14"
+                   IsVisible="{Binding HasError}"
+                   HorizontalOptions="Center" />
+
+            <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                               IsRunning="{Binding IsBusy}"
+                               Color="{StaticResource Primary}"
+                               HorizontalOptions="Center" />
+        </StackLayout>
+
+    </Grid>
+
+</ContentPage>

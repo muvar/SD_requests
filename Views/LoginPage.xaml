@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="TicketTracker.Views.LoginPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:TicketTracker.ViewModels"
+             Title="{Binding Title}"
+             x:DataType="vm:LoginViewModel">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="25" Padding="30,0" VerticalOptions="Center">
+            
+            <!-- Логотип и заголовок -->
+            <Label Text="Система отслеживания заявок" 
+                   Style="{StaticResource HeaderLabel}"
+                   HorizontalOptions="Center" />
+            
+            <Label Text="Авторизация" 
+                   Style="{StaticResource SubHeaderLabel}"
+                   HorizontalOptions="Center" />
+
+            <!-- Поля ввода -->
+            <VerticalStackLayout Spacing="15">
+                <Label Text="Логин:" FontSize="16" />
+                <Entry Text="{Binding Login}" 
+                       Placeholder="Введите логин"
+                       Style="{StaticResource StandardEntry}" />
+
+                <Label Text="Пароль:" FontSize="16" />
+                <Entry Text="{Binding Password}" 
+                       Placeholder="Введите пароль"
+                       IsPassword="True"
+                       Style="{StaticResource StandardEntry}" />
+            </VerticalStackLayout>
+
+            <!-- Сообщение об ошибке -->
+            <Label Text="{Binding ErrorMessage}" 
+                   TextColor="Red" 
+                   FontSize="14"
+                   IsVisible="{Binding HasError}"
+                   HorizontalOptions="Center" />
+
+            <!-- Кнопки -->
+            <VerticalStackLayout Spacing="10">
+                <Button Text="Войти" 
+                        Command="{Binding LoginCommand}"
+                        Style="{StaticResource PrimaryButton}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}" />
+
+                <Button Text="Очистить" 
+                        Command="{Binding ClearFieldsCommand}"
+                        Style="{StaticResource SecondaryButton}" />
+            </VerticalStackLayout>
+
+            <!-- Индикатор загрузки -->
+            <ActivityIndicator IsVisible="{Binding IsBusy}" 
+                               IsRunning="{Binding IsBusy}"
+                               Color="{StaticResource Primary}" />
+
+            <!-- Информация для тестирования -->
+            <StackLayout Spacing="10" Margin="0,30,0,0">
+                <Label Text="Тестовые учетные записи:" 
+                       FontSize="14" 
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center" />
+                <Label Text="Администратор: admin / admin123" 
+                       FontSize="12" 
+                       HorizontalOptions="Center" />
+            </StackLayout>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
